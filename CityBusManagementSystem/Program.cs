@@ -2,6 +2,7 @@
 using CityBusManagementSystem.Helpers;
 using CityBusManagementSystem.Models.Data;
 using CityBusManagementSystem.Models.Entities;
+using CityBusManagementSystem.Repositries;
 using CityBusManagementSystem.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -76,6 +77,8 @@ namespace CityBusManagementSystem
             });
 
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IDriverRepository, DriverRepository>();
             //builder.Services.AddScoped<IAdminService, AdminServices>();
 
             builder.Services.AddScoped<JWTServices>();

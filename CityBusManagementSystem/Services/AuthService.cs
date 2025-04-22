@@ -2,6 +2,7 @@
 using CityBusManagementSystem.Models;
 using CityBusManagementSystem.Models.Data;
 using CityBusManagementSystem.Models.Entities;
+using CityBusManagementSystem.Repositries;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,13 +13,16 @@ namespace CityBusManagementSystem.Services
     {
         private readonly UserManager<ApplicationUser> _UserManager;
         private readonly JWTServices _jwtservice;
-        private readonly AppDbContext _context;
+        private readonly IGenericRepository<Client> _IGenClientRepo;
+        private readonly IDriverRepository _DriverRepo;
 
-        public AuthService(UserManager<ApplicationUser> userManager, JWTServices jwtservice,AppDbContext context)
+        public AuthService
+            (IDriverRepository DriverRepo, IGenericRepository<Client> IGenClientRepo,UserManager<ApplicationUser> userManager, JWTServices jwtservice)
         {
-            _UserManager = userManager;
-            _jwtservice = jwtservice;
-            _context = context;
+            this._UserManager = userManager;
+            this._jwtservice = jwtservice;
+            this._IGenClientRepo = IGenClientRepo;
+            this._DriverRepo = DriverRepo;
         }
 
         public async Task<AuthModel> RegisterClientAsync([FromBody] RegisterClientModel model)
@@ -37,11 +41,32 @@ namespace CityBusManagementSystem.Services
 
             await _UserManager.AddToRoleAsync(user,"Client");
 
-            _context.Clients.Add(new Client(user.Id));
-
-            _context.SaveChanges();
+            _IGenClientRepo.Add(new Client(user.Id));
 
             return new AuthModel(model, "Client", await _jwtservice.CreateJwtToken(user));
+        }
+        public async Task<AuthModel> RegisterDriverAsync([FromBody] RegisterDriverModel model)
+        {
+            if (await IsUserNameToken(model.UserName))
+                return new AuthModel("UserName Is already registerd!");
+
+            if (await IsEmailToken(model.Email))
+                return new AuthModel("Email Is already registerd!");
+
+            if (_DriverRepo.IsSsnToken(model.SSN))
+                return new AuthModel("Ssn Is already registerd!");
+
+            ApplicationUser user = new ApplicationUser(model.UserName, model.Name, model.Email);
+
+            var result = await _UserManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded) return new AuthModel(GetErrors(result));
+
+            await _UserManager.AddToRoleAsync(user, "Driver");
+
+            _DriverRepo.Add(new Driver(user.Id,model.SSN,model.Address,model.ImgDrivingLicense));
+
+            return new AuthModel(model, "Driver", await _jwtservice.CreateJwtToken(user));
         }
         private async Task<bool> IsUserNameToken(string username)
             => await _UserManager.FindByNameAsync(username) is not null ? true : false;

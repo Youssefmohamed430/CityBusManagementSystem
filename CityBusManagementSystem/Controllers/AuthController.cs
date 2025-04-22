@@ -29,5 +29,19 @@ namespace CityBusManagementSystem.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("RegisterDriver")]
+        public async Task<IActionResult> RegisterDriverAsync(RegisterDriverModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.RegisterDriverAsync(model);
+
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
     }
 }

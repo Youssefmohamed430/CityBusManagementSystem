@@ -17,8 +17,7 @@ namespace CityBusManagementSystem.Models
         {
             Message = message;
         }
-        public AuthModel
-            (RegisterClientModel model ,string role ,JwtSecurityToken token) 
+        public AuthModel(IRegisterModel model ,string role ,JwtSecurityToken token)
         {
                 this.Username = model.UserName;
                 this.Email = model.Email;

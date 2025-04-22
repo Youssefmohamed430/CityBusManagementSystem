@@ -12,5 +12,13 @@
         public int? BusId { get; set; }
         public Bus? bus { get; set; }
         public List<DriverSchedule>? DriverSchedules { get; set; }
+
+        public Driver(string DriverId,string sSN, string address, string imgDrivingLicense)
+        {
+            this.DriverId = DriverId;
+            SSN = sSN;
+            Address = address;
+            ImgDrivingLicense = imgDrivingLicense;
+        }
     }
 }
