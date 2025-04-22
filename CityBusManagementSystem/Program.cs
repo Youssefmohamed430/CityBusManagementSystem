@@ -79,7 +79,7 @@ namespace CityBusManagementSystem
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IDriverRepository, DriverRepository>();
-            //builder.Services.AddScoped<IAdminService, AdminServices>();
+            builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
             builder.Services.AddScoped<JWTServices>();
 
