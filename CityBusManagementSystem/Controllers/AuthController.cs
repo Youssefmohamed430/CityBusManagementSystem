@@ -43,5 +43,32 @@ namespace CityBusManagementSystem.Controllers
 
             return Ok(result);
         }
+        [HttpPost("AddAdmin")]
+        public async Task<IActionResult> AddNewAdmin(RegisterClientModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.AddNewAdmin(model);
+
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
+
+        [HttpPost("LogIn")]
+        public async Task<IActionResult> LogInAsync(LoginModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authService.LogInasync(model);
+
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
     }
 }
