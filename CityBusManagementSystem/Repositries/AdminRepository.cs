@@ -8,10 +8,14 @@ namespace CityBusManagementSystem.Repositries
     {
         private readonly AppDbContext _context;
         private readonly IGenericRepository<Bus> _IGenBusRepo;
-        public AdminRepository(IGenericRepository<Bus> IGenBusRepo,AppDbContext context) : base(context)
+        private readonly IGenericRepository<Station> _IGenStationRepo;
+        private readonly IGenericRepository<Trip> _IGenTripRepo;
+        public AdminRepository(IGenericRepository<Trip> IGenTripRepo,IGenericRepository<Station> IGenStationRepo,IGenericRepository<Bus> IGenBusRepo,AppDbContext context) : base(context)
         {
             this._context = context; 
             this._IGenBusRepo = IGenBusRepo;
+            this._IGenStationRepo = IGenStationRepo;
+            this._IGenTripRepo = IGenTripRepo;
         }
 
         public ErrorModel AddBus(BusModel model)
@@ -33,7 +37,40 @@ namespace CityBusManagementSystem.Repositries
                    }
             }
 
-            return new ErrorModel("Adding Done",true);
+            return new ErrorModel("",true);
         }
+        public ErrorModel AddStation(StationModel model)
+        {
+            var result = _context.Stations.Any(x => x.Location == model.Location);
+
+            if (result)
+                return new ErrorModel("The Station is already here!");
+
+            try
+            {
+                _IGenStationRepo.Add(new Station(model.StationName, model.Location));
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel(ex.Message);
+            }
+
+            return new ErrorModel("", true);
+        }
+
+        public ErrorModel AddTrip(TripModel model)
+        {
+            try
+            {
+                _IGenTripRepo.Add(new Trip(model.Source, model.Destination));
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel(ex.Message);
+            }
+
+            return new ErrorModel("", true);
+        }
+
     }
 }

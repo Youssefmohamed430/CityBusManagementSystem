@@ -31,5 +31,33 @@ namespace CityBusManagementSystem.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("AddStation")]
+        public IActionResult AddStation(StationModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = _IadminRepository.AddStation(model);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
+
+        [HttpPost("AddTrip")]
+        public IActionResult AddTrip(TripModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = _IadminRepository.AddTrip(model);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
     }
 }

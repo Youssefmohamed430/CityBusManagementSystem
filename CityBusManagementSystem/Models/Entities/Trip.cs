@@ -9,5 +9,15 @@
         public List<TripStation> TripStations { get; set; }
         public List<TripsSchedule> tripsSchedule { get; set; }
 
+        public Trip()
+        {
+            
+        }
+        public Trip(string Source, string Destination)
+        {
+            this.Source = Source;
+            this.Destination = Destination;
+        }
+
     }
 }
